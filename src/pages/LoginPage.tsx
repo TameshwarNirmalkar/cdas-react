@@ -1,30 +1,43 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { apiCall } from "../services/api";
 
 interface LoginProps {
   onLogin: () => void;
 }
 
+
 const LoginPage: React.FC<LoginProps> = ({ onLogin }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.SubmitEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
-    
-    // Basic Validation
-    if (!email || !password) {
-      setError('Please fill in all fields');
-      return;
+
+    try {
+      if (!email || !password) {
+        setError("Please fill in all fields");
+        return;
+      }
+      
+      const loginRes = await apiCall(`/auth/login`,{
+        method: 'POST',
+        body: JSON.stringify({email, password}),
+      });
+      console.log('========= ', loginRes);
+      if(loginRes.token){
+        setError("");
+        sessionStorage.setItem('token', loginRes.token);
+        onLogin();
+      } else {
+        setError("Invalid email or password");
+      }
+
+    } catch (error) {
+      console.log("Error", error);
     }
 
-    // Mock Auth Logic (Replace with your API call)
-    if (email === 'admin@test.com' && password === 'password') {
-      setError('');
-      onLogin();
-    } else {
-      setError('Invalid email or password');
-    }
+    
   };
 
   return (
@@ -68,27 +81,54 @@ const LoginPage: React.FC<LoginProps> = ({ onLogin }) => {
 // Simple inline styles for a quick start
 const styles: { [key: string]: React.CSSProperties } = {
   container: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100vh',
-  
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100vh",
   },
   card: {
-    backgroundColor: '#fff',
-    padding: '40px',
-    borderRadius: '8px',
-    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-    width: '100%',
-    maxWidth: '400px',
+    backgroundColor: "#fff",
+    padding: "40px",
+    borderRadius: "8px",
+    boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+    width: "100%",
+    maxWidth: "400px",
   },
-  title: { margin: '0 0 10px 0', textAlign: 'center' },
-  subtitle: { color: '#666', textAlign: 'center', marginBottom: '20px' },
-  error: { color: 'red', backgroundColor: '#fee', padding: '10px', borderRadius: '4px', marginBottom: '15px', fontSize: '14px' },
-  inputGroup: { marginBottom: '15px' },
-  label: { display: 'block', marginBottom: '5px', fontSize: '14px', fontWeight: 'bold' },
-  input: { width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ddd', boxSizing: 'border-box' },
-  button: { width: '100%', padding: '12px', backgroundColor: '#007bff', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '16px', fontWeight: 'bold' },
+  title: { margin: "0 0 10px 0", textAlign: "center" },
+  subtitle: { color: "#666", textAlign: "center", marginBottom: "20px" },
+  error: {
+    color: "red",
+    backgroundColor: "#fee",
+    padding: "10px",
+    borderRadius: "4px",
+    marginBottom: "15px",
+    fontSize: "14px",
+  },
+  inputGroup: { marginBottom: "15px" },
+  label: {
+    display: "block",
+    marginBottom: "5px",
+    fontSize: "14px",
+    fontWeight: "bold",
+  },
+  input: {
+    width: "100%",
+    padding: "10px",
+    borderRadius: "4px",
+    border: "1px solid #ddd",
+    boxSizing: "border-box",
+  },
+  button: {
+    width: "100%",
+    padding: "12px",
+    backgroundColor: "#007bff",
+    color: "#fff",
+    border: "none",
+    borderRadius: "4px",
+    cursor: "pointer",
+    fontSize: "16px",
+    fontWeight: "bold",
+  },
 };
 
 export default LoginPage;

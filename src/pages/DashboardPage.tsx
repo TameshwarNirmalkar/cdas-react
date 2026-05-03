@@ -2,25 +2,25 @@ import { Outlet, Link } from 'react-router-dom';
 
 export default function DashboardLayout({ onLogout }: { onLogout: () => void }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+    <div>
       {/* --- MASTER HEADER --- */}
-      <header style={{ background: '#333', color: '#fff', padding: '1rem' }}>
-        <nav>
-          <Link to="/dashboard" style={{ color: 'white', marginRight: '15px' }}>Stats</Link>
-          <Link to="/dashboard/settings" style={{ color: 'white', marginRight: '15px' }}>Settings</Link>
-          <button onClick={onLogout}>Logout</button>
-        </nav>
-      </header>
+      <header className="flex items-center justify-between px-6 py-4 bg-white shadow-md">
+        
+        <div className="text-2xl font-bold text-blue-600">
+        CDAS
+        </div>
 
+        
+        <nav className="hidden md:flex space-x-8 text-gray-700 font-medium">
+          <Link to="/dashboard" className="hover:text-blue-600 transition">Create Document</Link>
+          <Link to="/dashboard/settings" className="hover:text-blue-600 transition">Settings</Link>
+          <button onClick={onLogout} className="hover:text-blue-600 transition">Logout</button>
+        </nav>        
+      </header>
       {/* --- PAGE CONTENT (This changes based on the route) --- */}
-      <main style={{ flex: 1, padding: '20px' }}>
+      <main>
         <Outlet /> 
       </main>
-
-      {/* --- MASTER FOOTER --- */}
-      <footer style={{ background: '#eee', padding: '1rem', textAlign: 'center' }}>
-        © 2024 Dashboard Inc.
-      </footer>
     </div>
   );
 }
