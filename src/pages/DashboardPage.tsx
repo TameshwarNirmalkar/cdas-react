@@ -12,8 +12,8 @@ import {
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   `inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all ${
     isActive
-      ? 'bg-white text-[#007bff] shadow-md'
-      : 'text-white/90 hover:bg-white/15 hover:text-white'
+      ? 'bg-white text-[#007bff]'
+      : 'text-white hover:bg-white/15 hover:text-white'
   }`;
 
 const mobileNavLinkClass = ({ isActive }: { isActive: boolean }) =>
