@@ -7,10 +7,7 @@ import ProtectedRoute, { GuestRoute } from './ProtectedRouteWrapper';
 import DashboardLayout from './pages/DashboardPage';
 import LoginPage from './pages/LoginPage';
 import CreateDocument from './pages/CreateDocument';
-
-;
-const Settings = () => <h2>User Settings</h2>;
-
+import SettingsPage from './pages/SettingsPage';
 
 function App() {
 
@@ -55,7 +52,7 @@ function App() {
         </ProtectedRoute>
       }>
         <Route index element={<CreateDocument />} />
-        <Route path="settings" element={<Settings />} /> 
+        <Route path="settings" element={<SettingsPage />} />
         </Route>
       </Routes> 
     </>

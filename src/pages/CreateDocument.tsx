@@ -129,14 +129,14 @@ function CreateDocument() {
           }}
           size="large"
         >
-          <Row gutter={[24, 24]}>
-            <Col xs={24} lg={16}>
-              <Space orientation="vertical" size="large" className="w-full">
+          <Space orientation="vertical" size="large" className="w-full">
+            <Row gutter={[24, 24]} align="top">
+              <Col xs={24} lg={16}>
                 <Card
                   title={
                     <Space>
                       <FileTextOutlined />
-                      <span>Document details</span>
+                      <span>Document Details</span>
                     </Space>
                   }
                 >
@@ -169,15 +169,56 @@ function CreateDocument() {
                     <Input placeholder="name@company.com" />
                   </Form.Item>
                 </Card>
+              </Col>
 
+              <Col xs={24} lg={8}>
                 <Card
-                  title="Approval workflow"
-                  extra={
-                    <Typography.Text type="secondary" className="text-sm font-normal">
-                      Define steps and assign approvers
-                    </Typography.Text>
-                  }
+                  title="Recent Activity"
+                  styles={{ body: { paddingTop: 0 } }}
                 >
+                  {auditLoading ? (
+                    <Flex justify="center" className="py-12">
+                      <Spin />
+                    </Flex>
+                  ) : auditLogs.length === 0 ? (
+                    <Empty
+                      image={Empty.PRESENTED_IMAGE_SIMPLE}
+                      description="No documents yet"
+                      className="!my-0"
+                    />
+                  ) : (
+                    <Flex vertical gap={16}>
+                      {auditLogs.map((item) => (
+                        <div
+                          key={item._id}
+                          className="border-b border-[#f0f0f0] pb-4 last:border-0 last:pb-0"
+                        >
+                          <Typography.Text strong ellipsis className="block">
+                            {item.title}
+                          </Typography.Text>
+                          <Typography.Paragraph
+                            type="secondary"
+                            className="!mb-0 !mt-1"
+                            ellipsis={{ rows: 2 }}
+                          >
+                            {item.content || 'No description'}
+                          </Typography.Paragraph>
+                        </div>
+                      ))}
+                    </Flex>
+                  )}
+                </Card>
+              </Col>
+            </Row>
+
+            <Card
+              title="Approval workflow"
+              extra={
+                <Typography.Text type="secondary" className="text-sm font-normal">
+                  Define steps and assign approvers
+                </Typography.Text>
+              }
+            >
                   <Form.List name="workflow">
                     {(fields, { add, remove }) => (
                       <>
@@ -282,61 +323,20 @@ function CreateDocument() {
                   </Form.List>
                 </Card>
 
-                <Flex justify="end" gap={12} className="pb-4">
-                  <Button size="large" onClick={() => form.resetFields()}>
-                    Reset
-                  </Button>
-                  <Button
-                    type="primary"
-                    size="large"
-                    htmlType="submit"
-                    loading={submitting}
-                  >
-                    Create document
-                  </Button>
-                </Flex>
-              </Space>
-            </Col>
-
-            <Col xs={24} lg={8}>
-              <Card
-                title="Recent activity"
-                className="lg:sticky lg:top-6"
-                styles={{ body: { paddingTop: 8 } }}
+            <Flex justify="end" gap={12} className="pb-4">
+              <Button size="large" onClick={() => form.resetFields()}>
+                Reset
+              </Button>
+              <Button
+                type="primary"
+                size="large"
+                htmlType="submit"
+                loading={submitting}
               >
-                {auditLoading ? (
-                  <Flex justify="center" className="py-12">
-                    <Spin />
-                  </Flex>
-                ) : auditLogs.length === 0 ? (
-                  <Empty
-                    image={Empty.PRESENTED_IMAGE_SIMPLE}
-                    description="No documents yet"
-                  />
-                ) : (
-                  <Flex vertical gap={16}>
-                    {auditLogs.map((item) => (
-                      <div
-                        key={item._id}
-                        className="border-b border-[#f0f0f0] pb-4 last:border-0 last:pb-0"
-                      >
-                        <Typography.Text strong ellipsis className="block">
-                          {item.title}
-                        </Typography.Text>
-                        <Typography.Paragraph
-                          type="secondary"
-                          className="!mb-0 !mt-1"
-                          ellipsis={{ rows: 2 }}
-                        >
-                          {item.content || 'No description'}
-                        </Typography.Paragraph>
-                      </div>
-                    ))}
-                  </Flex>
-                )}
-              </Card>
-            </Col>
-          </Row>
+                Create document
+              </Button>
+            </Flex>
+          </Space>
         </Form>
       </div>
     </div>

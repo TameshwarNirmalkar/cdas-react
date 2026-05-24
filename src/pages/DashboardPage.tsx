@@ -1,4 +1,4 @@
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet, NavLink } from 'react-router-dom';
 
 export default function DashboardLayout({ onLogout }: { onLogout: () => void }) {
   return (
@@ -12,14 +12,30 @@ export default function DashboardLayout({ onLogout }: { onLogout: () => void }) 
 
         
         <nav className="hidden md:flex space-x-8 text-gray-700 font-medium">
-          <Link to="/dashboard" className="hover:text-blue-600 transition">Create Document</Link>
-          <Link to="/dashboard/settings" className="hover:text-blue-600 transition">Settings</Link>
-          <button onClick={onLogout} className="hover:text-blue-600 transition">Logout</button>
-        </nav>        
+          <NavLink
+            to="/dashboard"
+            end
+            className={({ isActive }) =>
+              isActive ? 'text-blue-600' : 'hover:text-blue-600 transition'
+            }
+          >
+            Create Document
+          </NavLink>
+          <NavLink
+            to="/dashboard/settings"
+            className={({ isActive }) =>
+              isActive ? 'text-blue-600' : 'hover:text-blue-600 transition'
+            }
+          >
+            Settings
+          </NavLink>
+          <button type="button" onClick={onLogout} className="hover:text-blue-600 transition">
+            Logout
+          </button>
+        </nav>
       </header>
-      {/* --- PAGE CONTENT (This changes based on the route) --- */}
       <main>
-        <Outlet /> 
+        <Outlet context={{ onLogout }} />
       </main>
     </div>
   );
