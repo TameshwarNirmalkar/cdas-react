@@ -1,8 +1,9 @@
 
-import { Route, Routes, useNavigate } from 'react-router-dom';
+import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import './App.css'
-import { useEffect, useState } from 'react';
-import ProtectedRoute from './ProtectedRouteWrapper';
+import { useState, memo } from 'react';
+import { hasToken } from './auth';
+import ProtectedRoute, { GuestRoute } from './ProtectedRouteWrapper';
 import DashboardLayout from './pages/DashboardPage';
 import LoginPage from './pages/LoginPage';
 import CreateDocument from './pages/CreateDocument';
@@ -22,21 +23,31 @@ function App() {
   };
 
   const handleLogout = () => {
+    sessionStorage.removeItem('token');
     setIsAuthenticated(false);
     navigate('/login');
   };
 
-  useEffect(() => {
-    console.log("=====> app state", isAuthenticated);
-  }, [])
-  
-
   return (
     <>      
       <Routes>
-        <Route path="/login" element={
-        <LoginPage onLogin={handleLogin} />
-      } />
+        <Route
+          path="/"
+          element={
+            <Navigate
+              to={isAuthenticated || hasToken() ? '/dashboard' : '/login'}
+              replace
+            />
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <GuestRoute isAuthenticated={isAuthenticated}>
+              <LoginPage onLogin={handleLogin} />
+            </GuestRoute>
+          }
+        />
       {/* Protected Dashboard Route */}
       <Route path="/dashboard" element={
         <ProtectedRoute isAuthenticated={isAuthenticated}>
@@ -51,4 +62,4 @@ function App() {
   )
 }
 
-export default App
+export default memo(App)

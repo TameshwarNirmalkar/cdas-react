@@ -1,11 +1,30 @@
 import { Navigate } from "react-router-dom";
+import { hasToken } from "./auth";
 
-// A simple wrapper to protect routes
-const ProtectedRoute = ({ children, isAuthenticated }: { children: React.ReactNode, isAuthenticated: boolean }) => {
-    if (!isAuthenticated) {
-      return <Navigate to="/login" replace />;
-    }
-    return children;
-  };
+export const GuestRoute = ({
+  children,
+  isAuthenticated,
+}: {
+  children: React.ReactNode;
+  isAuthenticated: boolean;
+}) => {
+  if (isAuthenticated || hasToken()) {
+    return <Navigate to="/dashboard" replace />;
+  }
+  return children;
+};
 
-  export default ProtectedRoute
+const ProtectedRoute = ({
+  children,
+  isAuthenticated,
+}: {
+  children: React.ReactNode;
+  isAuthenticated: boolean;
+}) => {
+  if (!isAuthenticated && !hasToken()) {
+    return <Navigate to="/login" replace />;
+  }
+  return children;
+};
+
+export default ProtectedRoute;
