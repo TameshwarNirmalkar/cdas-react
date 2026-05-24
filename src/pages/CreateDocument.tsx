@@ -37,11 +37,32 @@ interface CreateDocumentFormValues {
   workflow: WorkflowStep[];
 }
 
+interface AuditLogDocumentState {
+  title?: string;
+  content?: string;
+  createdBy?: string;
+  status?: string;
+}
+
 interface AuditLog {
   _id: string;
-  title: string;
-  content: string;
+  documentId: string;
+  action: string;
+  createdBy: string;
+  previousState: AuditLogDocumentState | null;
+  newState: AuditLogDocumentState | null;
+  createdAt: string;
+  updatedAt: string;
 }
+
+const getAuditDisplay = (log: AuditLog) => {
+  const state = log.newState ?? log.previousState;
+  return {
+    title: state?.title ?? 'Untitled document',
+    content: state?.content ?? '',
+    status: state?.status ?? log.action,
+  };
+};
 
 const defaultWorkflowStep = (): WorkflowStep => ({
   stepOrder: 1,
@@ -172,10 +193,7 @@ function CreateDocument() {
               </Col>
 
               <Col xs={24} lg={8}>
-                <Card
-                  title="Recent Activity"
-                  styles={{ body: { paddingTop: 0 } }}
-                >
+                <Card title="Recent Activity">
                   {auditLoading ? (
                     <Flex justify="center" className="py-12">
                       <Spin />
@@ -187,24 +205,34 @@ function CreateDocument() {
                       className="!my-0"
                     />
                   ) : (
-                    <Flex vertical gap={16}>
-                      {auditLogs.map((item) => (
-                        <div
-                          key={item._id}
-                          className="border-b border-[#f0f0f0] pb-4 last:border-0 last:pb-0"
-                        >
-                          <Typography.Text strong ellipsis className="block">
-                            {item.title}
-                          </Typography.Text>
-                          <Typography.Paragraph
-                            type="secondary"
-                            className="!mb-0 !mt-1"
-                            ellipsis={{ rows: 2 }}
+                    <Flex vertical gap={16} className="pt-2">
+                      {auditLogs.map((item) => {
+                        const { title, content, status } = getAuditDisplay(item);
+                        return (
+                          <div
+                            key={item._id}
+                            className="border-b border-[#f0f0f0] pb-4 last:border-0 last:pb-0"
                           >
-                            {item.content || 'No description'}
-                          </Typography.Paragraph>
-                        </div>
-                      ))}
+                            <Flex justify="space-between" align="center" gap={8}>
+                              <Typography.Text strong ellipsis className="flex-1">
+                                {title}
+                              </Typography.Text>
+                              <Tag color="blue">{item.action}</Tag>
+                            </Flex>
+                            <Typography.Paragraph
+                              type="secondary"
+                              className="!mb-0 !mt-1"
+                              ellipsis={{ rows: 2 }}
+                            >
+                              {content || 'No description'}
+                            </Typography.Paragraph>
+                            <Typography.Text type="secondary" className="!mt-2 block text-xs">
+                              {item.createdBy} · {status} ·{' '}
+                              {new Date(item.createdAt).toLocaleString()}
+                            </Typography.Text>
+                          </div>
+                        );
+                      })}
                     </Flex>
                   )}
                 </Card>
